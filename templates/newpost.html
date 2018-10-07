@@ -1,17 +1,20 @@
 {% extends "base.html" %}
 {% block content  %}
+<style>
+    .error {color:red;}
+</style>
 <h1>Create New Post</h1>
-<form action='/' method=POST>
+<form action='/newpost' method=POST id='blogpost'>
     <label>
         Post Title:
         <input type='text' name='blog_title' value='{{blog_title}}'>
     </label>
-    <p>{{title_error}}</p>
+    <p class='error'>{{title_error}}</p>
     <label>
          Post Body:
-        <input type='text' name='blog_body' value='{{blog_body}}'>
+         <textarea name='blog_body' value='{{blog_body}}' form='blogpost'></textarea>
     </label>
-    <p>{{body_error}}</p>
+    <p class='error'>{{body_error}}</p>
     <input type="submit" value='Create Post'>
 </form>
 
