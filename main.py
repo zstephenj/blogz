@@ -2,7 +2,7 @@ from flask import Flask, request, redirect, render_template
 from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 app.config['DEBUG'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://build-a-blog:123456@localhost:8889/build-a-blog'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://blogz:123456@localhost:8889/blogz'
 app.config['SQLALCHEMY_ECHO'] = True
 
 db = SQLAlchemy(app)
@@ -11,10 +11,18 @@ class Bpost(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     blog_title = db.Column(db.String(255))
     blog_content = db.Column(db.Text)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self, blog_title, blog_content):
+    def __init__(self, blog_title, blog_content, author):
         self.blog_title = blog_title
         self.blog_content = blog_content
+        self.author = author
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    username = db.Column(db.String(88))
+    password = db.Column(db.String(88))
+    blogs = db.relationship('Bpost', backref='author')
 
 @app.route("/newpost", methods=['POST', 'GET'])
 def new_post():
