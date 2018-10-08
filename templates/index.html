@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content  %}
+    <h1>Demo Blog!</h1>
+    <p><strong>Select anyone from our list of authors to see their blog posts!</strong></p>
+    <hr>
+    {% for author in authors %}
+        <a href='./blog?user={{author.id}}'><h1>{{author.username}}</h1></a>
+        <hr>
+    {% endfor %}
+
+
+
+{% endblock  %}

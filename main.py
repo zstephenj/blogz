@@ -13,10 +13,10 @@ class Bpost(db.Model):
     blog_content = db.Column(db.Text)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self, blog_title, blog_content, author):
+    def __init__(self, blog_title, blog_content, author_id):
         self.blog_title = blog_title
         self.blog_content = blog_content
-        self.author = author
+        self.author_id = author_id
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -30,14 +30,14 @@ class User(db.Model):
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup']
+    allowed_routes = ['login', 'signup','blog','index']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
 @app.route('/logout')
 def logout():
     del session['username']
-    return redirect('/')
+    return redirect('/blog')
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -109,7 +109,8 @@ def new_post():
         if not blog_body:
             body_error = 'Post body cannot be empty.'   
         if not title_error and not body_error:
-            new_post = Bpost(blog_title, blog_body)
+            author_user = User.query.filter_by(username=session['username']).first()
+            new_post = Bpost(blog_title, blog_body, author_user.id)
             db.session.add(new_post)
             db.session.commit()
             blog_id = new_post.id 
@@ -122,12 +123,22 @@ def new_post():
 @app.route("/blog")
 def blog():
     id = request.args.get('id')
+    author_id = request.args.get('user')
     if not id == None:
         content = Bpost.query.filter_by(id=id).all()
+        return render_template("blog.html", title="Demo Blog", content=content) 
+    if not author_id == None:
+        content = Bpost.query.filter_by(author_id=author_id).all()
         return render_template("blog.html", title="Demo Blog", content=content) 
     else:
         content = Bpost.query.all()
         return render_template("blog.html", title="Demo Blog", content=content)
+
+@app.route('/')
+def index():
+    authors = User.query.all()
+    return render_template('index.html', title='Blog Home', authors=authors)
+
 
 if __name__ == '__main__':
     app.run ()

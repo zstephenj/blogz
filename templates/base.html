@@ -1,26 +1,35 @@
 <!DOCTYPE html>
+
 <head>
     <style>
     .error {color:red};
     .success {color: green};
     </style>
+
 <title>{{title}}</title>
+
 <p>
-    <a href="blog">Main Blog </a>
+    <a href="/">Home Page - Authors</a>
+    <a href="blog">All Blogs</a>
     <a href="newpost">Create New Post</a>
     <a href="login">Login</a>
     <a href="signup">Create Account</a>
     <a href="logout">Logout</a>
 </p>
+
 </head>
+
 <body>
     {% with messages = get_flashed_messages(with_categories=True) %}
+        
         <ul>
         {% for category, message in messages %}
             <li class={{category}}> {{message}} </li>
         {% endfor %}
         </ul>
+    
     {% endwith %}
+    
     {% block content %}
     {% endblock %}
 
